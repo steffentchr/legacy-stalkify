@@ -1,7 +1,6 @@
 TODO
 - Change stalkify account
 - Clear playlist
-- Run in background
 
 - Blog post
 - Twitter
