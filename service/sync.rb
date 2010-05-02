@@ -17,7 +17,7 @@ conn = PGconn.connect("localhost",5432,"","",DB_NAME,DB_USERNAME,DB_PASSWORD)
 
 
 # Sync playlists
-results = conn.query("select playlist_id, playlist_name from stalkify_playlists where spotify_uri is null")
+results = conn.query("select playlist_id, playlist_name from stalkify_playlists pl where spotify_uri is null and exists (select 1 from stalkify_tracks tr where tr.playlist_id = pl.playlist_id)")
 results.each do |row|
   playlist_id = row[0]
   playlist_name = row[1]

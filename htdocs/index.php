@@ -39,12 +39,12 @@ if ($res->numRows()==0) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $_x = curl_exec($ch); 
     if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) {
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, update_interval) values (".db_quote($username).", 'Stalkify: '||".db_quote($username)."||' / live', 'recent', '1 minute'::interval)");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", 'Stalkify: '||".db_quote($username)."||' / all-time', 'toptracks-overall')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", 'Stalkify: '||".db_quote($username)."||' / this week', 'toptracks-7day')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", 'Stalkify: '||".db_quote($username)."||' / 3 months', 'toptracks-3month')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", 'Stalkify: '||".db_quote($username)."||' / 6 months', 'toptracks-6month')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", 'Stalkify: '||".db_quote($username)."||' / this year', 'toptracks-12month')");
+      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, update_interval) values (".db_quote($username).", '@'||".db_quote($username)."||' / live', 'recent', '1 minute'::interval)");
+      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / all-time', 'toptracks-overall')");
+      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / this week', 'toptracks-7day')");
+      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / 3 months', 'toptracks-3month')");
+      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / 6 months', 'toptracks-6month')");
+      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / this year', 'toptracks-12month')");
       Header('Location: /'.$username);
     } else {
       Header("Location: /welcome?msg=Wow.+That+is+not+a+real+Last.fm+user");
