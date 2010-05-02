@@ -21,6 +21,8 @@ for row in cur.fetchall():
     lastfm_username = row[1]
     feed_type = row[2]
 
+    cur.execute("update stalkify_playlists set last_updated = now() where playlist_id = %s", (playlist_id, ))
+
     last_user = pylast.User(lastfm_username, last_network);
 
     if feed_type == "recent":
@@ -34,7 +36,7 @@ for row in cur.fetchall():
             recent_name = ""
             recent_artist = ""
             
-        print ("Most recent for %s is %s - %s" % (lastfm_username, recent_name, recent_artist))
+        #print ("Most recent for %s is %s - %s" % (lastfm_username, recent_name, recent_artist))
 
         # Get data from last.fm
         tracks = last_user.get_recent_tracks(100)
@@ -46,7 +48,7 @@ for row in cur.fetchall():
 
             # Already added?
             if artist == recent_artist and name == recent_name:
-                print "Matched recent track, breaking"
+                #print "Matched recent track, breaking"
                 break
 
             addtracks.append(played_track)
@@ -85,7 +87,6 @@ for row in cur.fetchall():
             # Add the row
             cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
 
-    cur.execute("update stalkify_playlists set last_updated = now() where playlist_id = %s", (playlist_id, ))
 
 cur.close()
 db_conn.commit()

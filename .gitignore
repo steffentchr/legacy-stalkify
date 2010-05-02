@@ -1,5 +1,7 @@
 *~
 service/spotify_appkey.key
+dependencies/
+service/clear.rb
 *.pyc
 service/config.py
 service/config.rb
