@@ -5,7 +5,6 @@ while true; do
   ./import.py
   echo SYNC
   ./sync.rb
-
   echo SLEEP
   sleep 10
 done

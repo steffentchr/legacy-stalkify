@@ -5,5 +5,7 @@ service/config.py
 service/config.rb
 service/bk/
 service/tmp/
+service/log/supervise
+service/supervise
 htdocs/config.php
 service/config.rb
