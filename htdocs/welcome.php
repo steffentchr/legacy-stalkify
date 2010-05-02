@@ -25,7 +25,7 @@ if( isset($_GET['msg']) ) {
 
 <div class="smallmeta listen-in">Listen in:
 <?
-$res = db_query("select pl.lastfm_username, tr.playlist_id, max(tr.creation_date) as m from stalkify_tracks tr, stalkify_playlists pl where pl.feed_type = 'recent' and pl.playlist_id = tr.playlist_id group by pl.lastfm_username, tr.playlist_id order by m desc limit 5");
+$res = db_query("select pl.lastfm_username, tr.playlist_id, max(tr.creation_date) as m from stalkify_tracks tr, stalkify_playlists pl where pl.feed_type = 'recent' and pl.playlist_id = tr.playlist_id group by pl.lastfm_username, tr.playlist_id order by m desc limit 10");
 while ($res->fetchInto($row)) {
   ?>
   <a href="/<?=$row['lastfm_username']?>">@<?=$row['lastfm_username']?></a>

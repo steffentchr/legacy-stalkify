@@ -30,6 +30,7 @@ form {text-align:center;}
 .playlist-list td {vertical-align:top;}
 .playlist-list-name {text-align:right; padding-right:25px; white-space:nowrap;}
 .playlist-list-desc {padding-bottom:20px; line-height:18px;}
+tr.discrete td, tr.discrete td h3 {color:#aaa !important;}
 
 .listen-in {padding-top:50px;}
 

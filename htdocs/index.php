@@ -27,31 +27,23 @@ if (sizeof($stubs)>2) {
   }
 }
 
-// Asked for list of playlists
-$res = db_query("select * from stalkify_playlists where spotify_uri is not null and lastfm_username = ".db_quote($username)." order by playlist_id");
+$res = db_query("select * from stalkify_playlists where lastfm_username = ".db_quote($username));
 if ($res->numRows()==0) {
-  // No list yet for consumption yet...
-  $res2 = db_query("select * from stalkify_playlists where lastfm_username = ".db_quote($username));
-  if ($res2->numRows()==0) {
-    // Check that the user exists and then create
-    $url = "http://ws.audioscrobbler.com/2.0/?api_key=0f9d58ba56bfa4bd4b24ba62b9568615&method=user.getrecenttracks&user=" . $username;
-    $ch = curl_init($url); 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $_x = curl_exec($ch); 
-    if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) {
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, update_interval) values (".db_quote($username).", '@'||".db_quote($username)."||' / live', 'recent', '1 minute'::interval)");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / all-time', 'toptracks-overall')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / this week', 'toptracks-7day')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / 3 months', 'toptracks-3month')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / 6 months', 'toptracks-6month')");
-      db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type) values (".db_quote($username).", '@'||".db_quote($username)."||' / this year', 'toptracks-12month')");
-      Header('Location: /'.$username);
-    } else {
-      Header("Location: /welcome?msg=Wow.+That+is+not+a+real+Last.fm+user");
-    }
+  // Check that the user exists and then create
+  $url = "http://www.last.fm/user/" . $username;
+  $ch = curl_init($url); 
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  $_x = curl_exec($ch); 
+  if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) {
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, update_interval) values (".db_quote($username).", '@'||".db_quote($username)."||' / live', 'recent', '1 minute'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / all-time', 'toptracks-overall', now()-'1 day'::interval+'2 minute'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / this week', 'toptracks-7day', now()-'1 day'::interval+'4 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / 3 months', 'toptracks-3month', now()-'1 day'::interval+'6 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / 6 months', 'toptracks-6month', now()-'1 day'::interval+'8 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / this year', 'toptracks-12month', now()-'1 day'::interval+'10 minutes'::interval)");
+    Header('Location: /'.$username);
   } else {
-    // Still waiting to be created in Spotify
-    include('stillwaiting.php');
+    Header("Location: /welcome?msg=Wow.+That+is+not+a+real+Last.fm+user");
   }
 } else {
   // Show lists!

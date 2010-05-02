@@ -15,7 +15,7 @@ db_conn = psycopg2.connect(config.DB_CONN_STRING)
 
 ### 1. IMPORT TRACK FROM LAST.FM ###
 cur = db_conn.cursor()
-cur.execute("select playlist_id, lastfm_username, feed_type from stalkify_playlists where (last_updated is null or last_updated+update_interval<now())")
+cur.execute("select playlist_id, lastfm_username, feed_type from stalkify_playlists where (last_updated is null or last_updated+update_interval<now()) order by feed_type")
 for row in cur.fetchall():
     playlist_id = row[0]
     lastfm_username = row[1]
@@ -63,6 +63,7 @@ for row in cur.fetchall():
 
             # Add the row
             cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
+            db_conn.commit()
     else:
         # Clear previous lists
         cur.execute("delete from stalkify_tracks where playlist_id = %s", (playlist_id, ))
@@ -87,6 +88,7 @@ for row in cur.fetchall():
 
             # Add the row
             cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
+            db_conn.commit()
 
 
 cur.close()
@@ -95,7 +97,7 @@ db_conn.commit()
 
 ### 2. MATCH TO TRACKS ON SPOTIFY AND UPDATE WITH SPOTIFY_URI ###
 cur = db_conn.cursor()
-cur.execute("select track_id, name, artist from stalkify_tracks where spotify_uri is null and processed_p is false")
+cur.execute("select track_id, name, artist from stalkify_tracks where spotify_uri is null and processed_p is false order by track_id")
 for row in cur.fetchall():
     try:
         track_id = row[0]
@@ -117,11 +119,11 @@ for row in cur.fetchall():
         do = "nothing"
 
 
+    db_conn.commit()
     time.sleep(0.3)
 
 
 cur.close()
-db_conn.commit()
 
 db_conn.close()
     

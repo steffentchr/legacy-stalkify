@@ -40,20 +40,20 @@ while index<pc.num_playlists()
 end 
 
 # Clear some playlists
-results = conn.query("select playlist_id, spotify_uri from stalkify_playlists pl where pl.feed_type <> 'recent' and spotify_uri is not null and exists (select 1 from stalkify_tracks tr where tr.playlist_id=pl.playlist_id and tr.spotify_uri is not null and tr.processed_p is false)")
-results.each do |row|
-  playlist_id = row[0]
-  playlist_uri = row[1]
-  
-  p = playlists[playlist_uri]
-  if p then
-    printf "Cleared content on '%s' with uri '%s'\n", p.name(), playlist_uri
-    while p.num_tracks()>0
-      # this is a method hacked into greenstripes
-      p.remove_first_track()
-    end
-  end
-end
+#results = conn.query("select playlist_id, spotify_uri from stalkify_playlists pl where pl.feed_type <> 'recent' and spotify_uri is not null and exists (select 1 from stalkify_tracks tr where tr.playlist_id=pl.playlist_id and tr.spotify_uri is not null and tr.processed_p is false)")
+#results.each do |row|
+#  playlist_id = row[0]
+#  playlist_uri = row[1]
+#  
+#  p = playlists[playlist_uri]
+#  if p then
+#    printf "Cleared content on '%s' with uri '%s'\n", p.name(), playlist_uri
+#    while p.num_tracks()>0
+#      # this is a method hacked into greenstripes
+#      p.remove_first_track()
+#    end
+#  end
+#end
 
 
 
