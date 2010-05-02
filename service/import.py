@@ -25,6 +25,7 @@ for row in cur.fetchall():
 
     last_user = pylast.User(lastfm_username, last_network);
 
+    print ("Processing %s for %s" % (feed_type, lastfm_username))
     if feed_type == "recent":
         # Get most recent addition
         cur.execute("select name, artist from stalkify_tracks where playlist_id = %s order by track_id desc limit 1", (playlist_id, ))
@@ -58,7 +59,7 @@ for row in cur.fetchall():
             t = played_track['track']
             name = t.get_title().encode('utf-8')
             artist = t.get_artist().get_name().encode('utf-8')
-            print ("Recent track for %s: %s - %s" % (lastfm_username, name, artist))
+            print ("Recent track for %s: %s - %s, time = %s" % (lastfm_username, name, artist, played_track['timestamp']))
 
             # Add the row
             cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
