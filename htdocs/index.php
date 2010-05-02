@@ -21,9 +21,9 @@ if (sizeof($stubs)>2) {
     Header('Location: /'.$username);
   } else {
     $res->fetchInto($row);
-    // http://open.spotify.com/user/camillan.89/playlist/0mgApBf4dLvEvo64sRleXs
-    // spotify:user:camillan.89:playlist:1uC3YYBp7rI8dUT9YtXiM0
-    Header('Location: '.$row['spotify_uri']);
+    preg_match("/spotify:user:([^:]+):([^:]+):([^:]+)/", $row['spotify_uri'], $matches);
+    $url = "http://open.spotify.com/user/".$matches[1]."/".$matches[2]."/".$matches[3];
+    Header('Location: '.$url);
   }
 }
 

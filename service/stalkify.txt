@@ -1,10 +1,9 @@
 TODO
-- Different playlist url
-- Github release
 - Change stalkify account
 - Clear playlist
 - Run in background
 - Stalkify me
+- sync.rb in github
 
 - Blog post
 - Twitter

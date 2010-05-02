@@ -2,7 +2,7 @@
 <table class="playlist-list">
   <tr>
     <td class="playlist-list-name">
-      <h3><a href="/<?=$username?>/recent">live</a> *</h3>
+      <h3><a target="_new" href="/<?=$username?>/recent">live</a> *</h3>
     </td>
     <td class="playlist-list-tilde">~&nbsp;</td>
     <td class="playlist-list-desc">
@@ -14,7 +14,7 @@
 
   <tr>
     <td class="playlist-list-name">
-      <h3><a href="/<?=$username?>/toptracks-overall">all-time favs</a> *</h3>
+      <h3><a target="_new" href="/<?=$username?>/toptracks-overall">all-time favs</a> *</h3>
     </td>
     <td class="playlist-list-tilde">~&nbsp;</td>
     <td class="playlist-list-desc">
@@ -24,7 +24,7 @@
 
   <tr>
     <td class="playlist-list-name">
-      <h3><a href="/<?=$username?>/toptracks-7day">this week's favs</a> *</h3>
+      <h3><a target="_new" href="/<?=$username?>/toptracks-7day">this week's favs</a> *</h3>
     </td>
     <td class="playlist-list-tilde">~&nbsp;</td>
     <td class="playlist-list-desc">
@@ -34,7 +34,7 @@
 
   <tr>
     <td class="playlist-list-name">
-      <h3><a href="/<?=$username?>/toptracks-3month">past three months</a> *</h3>
+      <h3><a target="_new" href="/<?=$username?>/toptracks-3month">past three months</a> *</h3>
     </td>
     <td class="playlist-list-tilde">~&nbsp;</td>
     <td class="playlist-list-desc">
@@ -44,7 +44,7 @@
 
   <tr>
     <td class="playlist-list-name">
-      <h3><a href="/<?=$username?>/toptracks-6month">past six months</a> *</h3>
+      <h3><a target="_new" href="/<?=$username?>/toptracks-6month">past six months</a> *</h3>
     </td>
     <td class="playlist-list-tilde">~&nbsp;</td>
     <td class="playlist-list-desc">
@@ -54,7 +54,7 @@
 
   <tr>
     <td class="playlist-list-name">
-      <h3><a href="/<?=$username?>/toptracks-12month">this year</a> *</h3>
+      <h3><a target="_new" href="/<?=$username?>/toptracks-12month">this year</a> *</h3>
     </td>
     <td class="playlist-list-tilde">~&nbsp;</td>
     <td class="playlist-list-desc">
