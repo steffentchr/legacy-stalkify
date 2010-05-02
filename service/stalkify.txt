@@ -2,7 +2,6 @@ TODO
 - Change stalkify account
 - Clear playlist
 - Run in background
-- sync.rb in github
 
 - Blog post
 - Twitter
