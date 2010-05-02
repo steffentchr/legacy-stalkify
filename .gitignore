@@ -6,4 +6,4 @@ service/config.rb
 service/bk/
 service/tmp/
 htdocs/config.php
-service/sync.rb
+service/config.rb

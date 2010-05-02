@@ -14,7 +14,7 @@ h1 {text-align:center; text-shadow: 2px 2px 2px #999; font-size:80px; font-weigh
 #tagline {text-align:center; margin-bottom:80px; font-size:20px;}
 h2 {text-shadow: 1px 1px 1px #B5C6A8; font-size:35px; font-weight:bold; color:#222; margin-bottom:20px; text-align:center;}
 h3 {color: #000; font-size: 18px; font-weight: bold; text-shadow: 1px 1px 1px #ccc; line-height: 1em; margin:0 0 5px 0;}
-p { margin: 0 0 20px 0; color:#555;}
+p { margin: 0 0 20px 0; color:#333;}
 p a { color:#000;}
 
 table tr td {font-size:13px;}
@@ -34,5 +34,6 @@ form {text-align:center;}
 .listen-in {padding-top:50px;}
 
 #footer {color:#888; font-size:13px; line-height:20px; margin:100px 0 20px 0; padding-top:15px; border-top:1px solid #eee;}
+#footer p {color:#888;}
 #footer a {color:#888; text-decoration:underline;}
 #footer a:hover {border-bottom-width:0;}
