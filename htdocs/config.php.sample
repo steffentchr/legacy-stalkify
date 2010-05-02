@@ -1,0 +1,4 @@
+<?
+global $dsn;
+$dsn = 'pgsql://DBUSER:DBPWD@localhost/DBNAME';
+?>

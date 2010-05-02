@@ -1,0 +1,9 @@
+*~
+service/spotify_appkey.key
+*.pyc
+service/config.py
+service/config.rb
+service/bk/
+service/tmp/
+htdocs/config.php
+service/sync.rb

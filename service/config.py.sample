@@ -1,0 +1,7 @@
+DB_CONN_STRING = "dbname=stalkifydb user=stalkifydb"
+
+LASTFM_API_KEY = "lastfmapikey"
+LASTFM_API_SECRET = "lastfmapisecret"
+
+SPOTIFY_USERNAME = "spotuser"
+SPOTIFY_PASSWORD = "spotpass"

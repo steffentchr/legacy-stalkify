@@ -1,0 +1,11 @@
+cd /web/stalkify/service
+
+while true; do
+  echo IMPORT
+  ./import.py
+  echo SYNC
+  ./sync.rb
+
+  echo SLEEP
+  sleep 10
+done
