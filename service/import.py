@@ -59,7 +59,7 @@ for row in cur.fetchall():
             t = played_track['track']
             name = t.get_title().encode('utf-8')
             artist = t.get_artist().get_name().encode('utf-8')
-            print ("Recent track for %s: %s - %s, time = %s" % (lastfm_username, name, artist, played_track['timestamp']))
+            #print ("Recent track for %s: %s - %s, time = %s" % (lastfm_username, name, artist, played_track['timestamp']))
 
             # Add the row
             cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
