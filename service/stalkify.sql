@@ -17,7 +17,12 @@ create table stalkify_playlists (
     update_interval             interval
                                 not null
                                 default '1 day'::interval,
-    last_updated                timestamptz
+    num_opens            	integer
+                                not null
+                                default 0,
+    last_updated                timestamptz,
+    clear_p                     boolean
+                                default false
 );
 
 insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, update_interval) values ('steffentchr', 'Stalkify: steffentchr''s recent', 'recent', '1 minute'::interval);
@@ -55,3 +60,10 @@ create table stalkify_tracks (
                                 default false,
     processed_date              timestamptz
 );
+
+create index idx_track_playlist_id on stalkify_tracks(playlist_id);
+create index idx_playlist_spotify_uri on stalkify_playlists(spotify_uri);
+create index idx_track_name on stalkify_tracks(name);
+create index idx_track_artist on stalkify_tracks(artist);
+create index idx_track_name_artist on stalkify_tracks(name, artist);
+

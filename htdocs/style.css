@@ -14,6 +14,7 @@ h1 {text-align:center; text-shadow: 2px 2px 2px #999; font-size:80px; font-weigh
 #tagline {text-align:center; margin-bottom:80px; font-size:20px;}
 h2 {text-shadow: 1px 1px 1px #B5C6A8; font-size:35px; font-weight:bold; color:#222; margin-bottom:20px; text-align:center;}
 h3 {color: #000; font-size: 18px; font-weight: bold; text-shadow: 1px 1px 1px #ccc; line-height: 1em; margin:0 0 5px 0;}
+h4 {color: #000; font-size: 16px; font-weight: bold; text-shadow: 1px 1px 1px #ccc; line-height: 1em; margin:25px 0 5px 0; text-align:center;}
 p { margin: 0 0 20px 0; color:#333;}
 p a { color:#000;}
 
@@ -32,9 +33,19 @@ form {text-align:center;}
 .playlist-list-desc {padding-bottom:20px; line-height:18px;}
 tr.discrete td, tr.discrete td h3 {color:#aaa !important;}
 
-.listen-in {padding-top:50px;}
+/*.listen-in {padding-top:50px;}*/
+.listen-in {position:absolute; right:15px; top:40px; background-color:#eee; padding:20px; font-size:15px;}
+.listen-in a {display:block; font-size:12px;}
 
 #footer {color:#888; font-size:13px; line-height:20px; margin:100px 0 20px 0; padding-top:15px; border-top:1px solid #eee;}
 #footer p {color:#888;}
 #footer a {color:#888; text-decoration:underline;}
 #footer a:hover {border-bottom-width:0;}
+
+#artistsContainer {overflow:auto; width:396;}
+.lastfmartist {width:126px; height:126px; border:1px solid #333; position:relative; background:url('http://stalkify.com/indicator.gif') center center no-repeat; cursor:pointer;}
+.lastfmartist-meta div {position:absolute; left:5px; background-color:#333; color:white; font-size:11px; padding:1px; font-weight:bold;}
+.lastfmartist-meta .lastfmartist-name {bottom:20px;}
+.lastfmartist-meta .lastfmartist-playcount {bottom:5px; font-size:9px;}
+#artistsContainer li {width:126px; height:126px; overflow:hidden; float:left; font-size:10px; text-align:left; line-height:12px;}
+#artistsContainer li img {background-color:#BDBD1D;}

@@ -40,27 +40,28 @@ while index<pc.num_playlists()
 end 
 
 # Clear some playlists
-#results = conn.query("select playlist_id, spotify_uri from stalkify_playlists pl where pl.feed_type <> 'recent' and spotify_uri is not null and exists (select 1 from stalkify_tracks tr where tr.playlist_id=pl.playlist_id and tr.spotify_uri is not null and tr.processed_p is false)")
-#results.each do |row|
-#  playlist_id = row[0]
-#  playlist_uri = row[1]
-#  
-#  p = playlists[playlist_uri]
-#  if p then
-#    printf "Cleared content on '%s' with uri '%s'\n", p.name(), playlist_uri
-#    while p.num_tracks()>0
-#      # this is a method hacked into greenstripes
-#      p.remove_first_track()
-#    end
-#  end
-#end
+results = conn.query("select playlist_id, spotify_uri from stalkify_playlists where clear_p is true")
+results.each do |row|
+  playlist_id = row[0]
+  playlist_uri = row[1]
+  
+  p = playlists[playlist_uri]
+  if p then
+    printf "Cleared content on '%s' with uri '%s'\n", p.name(), playlist_uri
+    while p.num_tracks()>0
+      # this is a method hacked into greenstripes
+      p.remove_first_track()
+    end
+  end
+  conn.query("update stalkify_playlists set clear_p = false where playlist_id = " + playlist_id)
+end
 
 
 
 
 
 # Sync tracks
-results = conn.query("select tr.track_id, pl.spotify_uri, tr.spotify_uri from stalkify_playlists pl, stalkify_tracks tr where tr.playlist_id=pl.playlist_id and tr.spotify_uri is not null and tr.processed_p is false order by track_id asc")
+results = conn.query("select tr.track_id, pl.spotify_uri, tr.spotify_uri from stalkify_playlists pl, stalkify_tracks tr where tr.playlist_id=pl.playlist_id and tr.spotify_uri is not null and tr.processed_p is false and pl.clear_p is false order by track_id asc")
 results.each do |row|
   track_id = row[0]
   playlist_uri = row[1]
@@ -76,7 +77,10 @@ results.each do |row|
   end
 end
 
+printf "Closing down"
 conn.close()
 
 session.logout
 session.process_events until session.connection_state == GreenStripes::ConnectionState::LOGGED_OUT
+
+printf "Done"

@@ -1,0 +1,4 @@
+begin transaction;
+insert into stalkify_playlists 
+(lastfm_username, playlist_name, feed_type, update_interval)
+select lastfm_username, 'Stalkify: '||lastfm_username||' / loved tracks' as playlist_name, 'lovedtracks' as feed_type, '12 hours'::interval as update_interval from stalkify_playlists where feed_type = 'recent';

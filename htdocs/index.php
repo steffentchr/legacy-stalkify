@@ -21,8 +21,11 @@ if (sizeof($stubs)>2) {
     Header('Location: /'.$username);
   } else {
     $res->fetchInto($row);
-    preg_match("/spotify:user:([^:]+):([^:]+):([^:]+)/", $row['spotify_uri'], $matches);
-    $url = "http://open.spotify.com/user/".$matches[1]."/".$matches[2]."/".$matches[3];
+    $playlist_id = $row['playlist_id'];
+    db_query("update stalkify_playlists set num_opens=num_opens+1 where playlist_id = " . db_quote($playlist_id)); 
+    $url = $row['spotify_uri'];
+    //preg_match("/spotify:user:([^:]+):([^:]+):([^:]+)/", $row['spotify_uri'], $matches);
+    //$url = "http://open.spotify.com/user/".$matches[1]."/".$matches[2]."/".$matches[3];
     Header('Location: '.$url);
   }
 }
@@ -35,12 +38,13 @@ if ($res->numRows()==0) {
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   $_x = curl_exec($ch); 
   if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200) {
-    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, update_interval) values (".db_quote($username).", '@'||".db_quote($username)."||' / live', 'recent', '1 minute'::interval)");
-    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / all-time', 'toptracks-overall', now()-'1 day'::interval+'2 minute'::interval)");
-    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / this week', 'toptracks-7day', now()-'1 day'::interval+'4 minutes'::interval)");
-    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / 3 months', 'toptracks-3month', now()-'1 day'::interval+'6 minutes'::interval)");
-    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / 6 months', 'toptracks-6month', now()-'1 day'::interval+'8 minutes'::interval)");
-    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / this year', 'toptracks-12month', now()-'1 day'::interval+'10 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, update_interval) values (".db_quote($username).", '@'||".db_quote($username)."||' / live', 'recent', '10 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / all-time', 'toptracks-overall', now()-'30 days'::interval+'2 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / this week', 'toptracks-7day', now()-'2 days'::interval+'5 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / 3 months', 'toptracks-3month', now()-'15 days'::interval+'8 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / 6 months', 'toptracks-6month', now()-'30 days'::interval+'12 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / this year', 'toptracks-12month', now()-'30 days'::interval+'15 minutes'::interval)");
+    db_query("insert into stalkify_playlists (lastfm_username, playlist_name, feed_type, last_updated) values (".db_quote($username).", '@'||".db_quote($username)."||' / loved tracks', 'lovedtracks', now()-'1 days'::interval+'15 minutes'::interval)");
     Header('Location: /'.$username);
   } else {
     Header("Location: /welcome?msg=Wow.+That+is+not+a+real+Last.fm+user");

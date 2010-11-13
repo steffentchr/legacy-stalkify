@@ -1,14 +1,17 @@
-### TODO
+### Quick!
 
-* Include/handle now playing track
+* Remove tracks in correct manner
+* Fewer sql injections
 * Optimize status indicator
-* Run search directly in libspotify; eliminate Metadata API
-* Run sync.rb and import.py alongside each other
+
+### Social
 
 * New feature on stalkify.com: Tweet it
 * New feature on stalkify.com: Facebook like
 
+### Future
 
+* Include/handle now playing track
 * New lists: Top albums
 * New list: Recommended artists
 * New feature on stalkify.com: Neighbouring users

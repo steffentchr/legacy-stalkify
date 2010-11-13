@@ -16,6 +16,7 @@ db_conn = psycopg2.connect(config.DB_CONN_STRING)
 ### 1. IMPORT TRACK FROM LAST.FM ###
 cur = db_conn.cursor()
 cur.execute("select playlist_id, lastfm_username, feed_type from stalkify_playlists where (last_updated is null or last_updated+update_interval<now()) order by feed_type")
+numtracks = 0
 for row in cur.fetchall():
     playlist_id = row[0]
     lastfm_username = row[1]
@@ -23,110 +24,102 @@ for row in cur.fetchall():
 
     cur.execute("update stalkify_playlists set last_updated = now() where playlist_id = %s", (playlist_id, ))
 
-    last_user = pylast.User(lastfm_username, last_network);
+    try:
+        last_user = pylast.User(lastfm_username, last_network);
 
-    print ("Processing %s for %s" % (feed_type, lastfm_username))
-    if feed_type == "recent":
-        # Get most recent addition
-        cur.execute("select name, artist from stalkify_tracks where playlist_id = %s order by track_id desc limit 1", (playlist_id, ))
-        if cur.rowcount>0:
-            r = cur.fetchone()
-            recent_name = r[0]
-            recent_artist = r[1]
-        else:
-            recent_name = ""
-            recent_artist = ""
+        print ("Processing %s for %s" % (feed_type, lastfm_username))
+        sys.stdout.flush()
+
+        if feed_type == "recent":
+            # Get most recent addition
+            cur.execute("select name, artist from stalkify_tracks where playlist_id = %s order by track_id desc limit 1", (playlist_id, ))
+            if cur.rowcount>0:
+                r = cur.fetchone()
+                recent_name = r[0]
+                recent_artist = r[1]
+            else:
+                recent_name = ""
+                recent_artist = ""
             
-        #print ("Most recent for %s is %s - %s" % (lastfm_username, recent_name, recent_artist))
+            #print ("Most recent for %s is %s - %s" % (lastfm_username, recent_name, recent_artist))
 
-        # Get data from last.fm
-        tracks = last_user.get_recent_tracks(100)
-        addtracks = []
-        for played_track in tracks:
-            t = played_track['track']
-            name = t.get_title().encode('utf-8')
-            artist = t.get_artist().get_name().encode('utf-8')
+            # Get data from last.fm
+            tracks = last_user.get_recent_tracks(20)
+            addtracks = []
+            for played_track in tracks:
+                t = played_track['track']
+                name = t.get_title().encode('utf-8')
+                artist = t.get_artist().get_name().encode('utf-8')
+                
+                # Already added?
+                if artist == recent_artist and name == recent_name:
+                    #print "Matched recent track, breaking"
+                    break
 
-            # Already added?
-            if artist == recent_artist and name == recent_name:
-                #print "Matched recent track, breaking"
-                break
+                addtracks.append(played_track)
 
-            addtracks.append(played_track)
+            addtracks.reverse()
+            for played_track in addtracks:
+                t = played_track['track']
+                name = t.get_title().encode('utf-8')
+                artist = t.get_artist().get_name().encode('utf-8')
+                #print ("Recent track for %s: %s - %s, time = %s" % (lastfm_username, name, artist, played_track['timestamp']))
+                
+                # Add the row
+                cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
+                numtracks = numtracks + 1
+                db_conn.commit()
 
-        addtracks.reverse()
-        for played_track in addtracks:
-            t = played_track['track']
-            name = t.get_title().encode('utf-8')
-            artist = t.get_artist().get_name().encode('utf-8')
-            #print ("Recent track for %s: %s - %s, time = %s" % (lastfm_username, name, artist, played_track['timestamp']))
 
-            # Add the row
-            cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
-            db_conn.commit()
-    else:
-        # Clear previous lists
-        cur.execute("delete from stalkify_tracks where playlist_id = %s", (playlist_id, ))
-
-        # Get data from last.fm
-        if feed_type == "toptracks-7day":
-            period = pylast.PERIOD_7DAYS
-        elif feed_type == "toptracks-3month":
-            period = pylast.PERIOD_3MONTHS
-        elif feed_type == "toptracks-6month":
-            period = pylast.PERIOD_6MONTHS 
-        elif feed_type == "toptracks-12month":
-            period = pylast.PERIOD_12MONTHS 
         else:
-            period = pylast.PERIOD_OVERALL
+            # Clear previous lists
+            print ("Queued clearing %s/%s" % (lastfm_username, feed_type))
+            cur.execute("update stalkify_playlists set clear_p = true where playlist_id = %s", (playlist_id, ))
+            cur.execute("delete from stalkify_tracks where playlist_id = %s", (playlist_id, ))
+
+            if feed_type == "lovedtracks":
+                tracks = last_user.get_loved_tracks(limit=None)
+            else:
+                # Get data from last.fm
+                if feed_type == "toptracks-7day":
+                    period = pylast.PERIOD_7DAYS
+                elif feed_type == "toptracks-3month":
+                    period = pylast.PERIOD_3MONTHS
+                elif feed_type == "toptracks-6month":
+                    period = pylast.PERIOD_6MONTHS 
+                elif feed_type == "toptracks-12month":
+                    period = pylast.PERIOD_12MONTHS 
+                else:
+                    period = pylast.PERIOD_OVERALL
+
+                tracks = last_user.get_top_tracks(period)
  
 
-        for track in last_user.get_top_tracks(period):
-            t = track['item']
-            name = t.get_title().encode('utf-8')
-            artist = t.get_artist().get_name().encode('utf-8')
+            for track in tracks:
+                if feed_type == "lovedtracks":
+                    t = track['track']
+                else:
+                    t = track['item']
 
-            # Add the row
-            cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
-            db_conn.commit()
+                name = t.get_title().encode('utf-8')
+                artist = t.get_artist().get_name().encode('utf-8')
+
+                # Add the row
+                cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
+                numtracks = numtracks + 1
+                db_conn.commit()
+
+
+    except:
+        do = "nothing"
 
 
 cur.close()
 db_conn.commit()
 
+print ("Retrieved %s tracks from last.fm" % (numtracks, ))
+sys.stdout.flush()
 
-### 2. MATCH TO TRACKS ON SPOTIFY AND UPDATE WITH SPOTIFY_URI ###
-cur = db_conn.cursor()
-cur.execute("select track_id, name, artist from stalkify_tracks where spotify_uri is null and processed_p is false order by track_id")
-for row in cur.fetchall():
-    try:
-        track_id = row[0]
-        name = row[1].decode('utf-8')
-        artist = row[2].decode('utf-8')
-        
-        search = spotimeta.search_track("%s %s" % (name, artist))
-        if search["total_results"]>0:
-            # Save the spotify_uri; then the sync script will carry on the good word
-            spotify_uri = search["result"][0]["href"]
-            cur.execute("update stalkify_tracks set spotify_uri=%s where track_id = %s", (spotify_uri, track_id))
-            spotimeta_artist = search["result"][0]["artist"]["name"]
-            spotimeta_name = search["result"][0]["name"]
-            print ("Queued %s - %s (%s): %s - %s" % (artist, name, spotify_uri, spotimeta_artist, spotimeta_name))
-        else: 
-            # We won't be able to do more for these tracks
-            cur.execute("update stalkify_tracks set processed_p=true, processed_date=now() where track_id = %s", (track_id, ))
-    except:
-        do = "nothing"
-
-
-    db_conn.commit()
-    time.sleep(0.3)
-
-
-cur.close()
-
-db_conn.close()
-    
 
 
 
