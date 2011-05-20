@@ -49,6 +49,7 @@ while ($res->fetchInto($row)) {
 
 </table>
 
+<?php if(0) { ?>
 <!-- Neighbours according to Last.fm -->
 <div id="neighbours" class="smallmeta listen-in" style="display:none; margin:0; padding-top:10px;">
   <div>Just like @<?=$username?>?</div>
@@ -66,6 +67,7 @@ while ($res->fetchInto($row)) {
       $('#neighbours').css({display:''});
   });
 </script>
+<?php } ?>
 
 <!-- Top artists according to Last.fm -->
 <div id="artists" style="display:none; padding-top:10px;">

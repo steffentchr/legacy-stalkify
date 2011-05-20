@@ -1,0 +1,7 @@
+cd /web/stalkify/service
+
+while true; do
+  echo MATCH
+  nice -n 19 ./match.py
+  sleep 20
+done

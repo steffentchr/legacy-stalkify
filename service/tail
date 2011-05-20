@@ -1,0 +1,1 @@
+tail -F /var/log/stalkify-import/current /var/log/stalkify-match/current /var/log/stalkify-sync/current

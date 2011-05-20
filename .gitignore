@@ -11,3 +11,4 @@ service/log/supervise
 service/supervise
 htdocs/config.php
 service/config.rb
+service/runit/

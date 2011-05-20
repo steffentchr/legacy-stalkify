@@ -66,4 +66,5 @@ create index idx_playlist_spotify_uri on stalkify_playlists(spotify_uri);
 create index idx_track_name on stalkify_tracks(name);
 create index idx_track_artist on stalkify_tracks(artist);
 create index idx_track_name_artist on stalkify_tracks(name, artist);
+create index idx_track_processed_p on stalkify_tracks(processed_p);
 

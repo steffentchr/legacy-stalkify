@@ -1,0 +1,7 @@
+cd /web/stalkify/service
+
+while true; do
+  echo SYNC
+  nice -n 19 ./sync.rb
+  sleep 120
+done

@@ -8,21 +8,37 @@ import spotimeta
 import psycopg2
 import config
 
+#print ("Start A")
+#sys.stdout.flush()
+
 last_network = pylast.get_lastfm_network(api_key = config.LASTFM_API_KEY)
+#print ("Start B")
+#sys.stdout.flush()
 last_network.disable_caching()
+#print ("Start C")
+#sys.stdout.flush()
 
 db_conn = psycopg2.connect(config.DB_CONN_STRING)
 
+#print ("Start D")
+#sys.stdout.flush()
+
 ### 1. IMPORT TRACK FROM LAST.FM ###
 cur = db_conn.cursor()
-cur.execute("select playlist_id, lastfm_username, feed_type from stalkify_playlists where (last_updated is null or last_updated+update_interval<now()) order by feed_type")
+cur.execute("select playlist_id, lastfm_username, feed_type, last_updated from stalkify_playlists where (last_updated is null or last_updated+update_interval<now()) order by (last_updated is null) desc, last_updated+update_interval")
 numtracks = 0
+#print ("Start E")
+#sys.stdout.flush()
 for row in cur.fetchall():
     playlist_id = row[0]
     lastfm_username = row[1]
     feed_type = row[2]
 
+    #print ("Start F, %s" % (playlist_id, ))
+    #sys.stdout.flush()
     cur.execute("update stalkify_playlists set last_updated = now() where playlist_id = %s", (playlist_id, ))
+    #print ("Start G")
+    #sys.stdout.flush()
 
     try:
         last_user = pylast.User(lastfm_username, last_network);
@@ -32,7 +48,8 @@ for row in cur.fetchall():
 
         if feed_type == "recent":
             # Get most recent addition
-            cur.execute("select name, artist from stalkify_tracks where playlist_id = %s order by track_id desc limit 1", (playlist_id, ))
+            ### limit 1 is costly? ### cur.execute("select name, artist from stalkify_tracks where playlist_id = %s order by track_id desc limit 1", (playlist_id, ))
+            cur.execute("select name, artist from stalkify_tracks where playlist_id = %s order by track_id desc", (playlist_id, ))
             if cur.rowcount>0:
                 r = cur.fetchone()
                 recent_name = r[0]
@@ -78,7 +95,11 @@ for row in cur.fetchall():
             cur.execute("delete from stalkify_tracks where playlist_id = %s", (playlist_id, ))
 
             if feed_type == "lovedtracks":
-                tracks = last_user.get_loved_tracks(limit=None)
+                print("Getting lovedtraks")
+                sys.stdout.flush()
+                tracks = last_user.get_loved_tracks(limit=500)
+                print("Done retrieving lovedtraks")
+                sys.stdout.flush()
             else:
                 # Get data from last.fm
                 if feed_type == "toptracks-7day":
@@ -105,6 +126,8 @@ for row in cur.fetchall():
                 artist = t.get_artist().get_name().encode('utf-8')
 
                 # Add the row
+                print("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
+                sys.stdout.flush()
                 cur.execute("insert into stalkify_tracks (playlist_id, name, artist) values (%s, %s, %s)", (playlist_id, name, artist))
                 numtracks = numtracks + 1
                 db_conn.commit()
